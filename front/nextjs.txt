@@ -8,7 +8,13 @@
   - pre render: 검색 엔진에게는 html을, 사용자에게는 일반 리액트 화면을
   - 첫 방문만 html, Link나 a태그 눌렀을 때부턴 리액트 방식으로 (NextJS)
 
--> 방문할 페이지만 보여주게 code spliting
+-> 방문할 페이지만 보여주게 code splitting
 
 * NextJS를 쓸 필요 없는 서비스 => Admin 페이지
+
+
+-----------------------------------------------------
+
+next는 import React from 'react' 구문이 필요 없음
+=> next는 pages폴더는 이름이 고정으로 'pages'여야 하며, pages폴더를 인식하고 이 안에 있는 파일들을 개별적인 페이지로 만들어 줌 (Code Splitting된 페이지로 만들어줌)
 
