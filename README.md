@@ -16,11 +16,13 @@
 
 
 -----------------------------------------------------
-
+- react의 hot loader 기능이 있어서 서버를 껐다키지 않아도 적용됨.
 - next는 import React from 'react' 구문이 필요 없음
 => next는 pages폴더는 이름이 고정으로 'pages'여야 하며, pages폴더를 인식하고 이 안에 있는 파일들을 개별적인 페이지로 만들어 줌 (Code Splitting된 페이지로 만들어줌)
 - Component들과 1:1로 매칭하여 링크를 만들어줌
 
 - Page가 아닌 재사용을 위한 컴포넌트들은 components 폴더를 따로 생성하여 관리 (폴더명이 components가 아니여도 됨. pages폴더는 이름을 무조건 pages로)
 
-
+- NextJS의 Link는 React와 다르게 react-router-dom이 아닌 자체적인 Link가 있음.
+- Next의 Link는 to가 아닌 href를 적고, Link 태그 안에 a태그를 추가해줌
+=> <Link href="/profile"><a>프로필</a></Link>
