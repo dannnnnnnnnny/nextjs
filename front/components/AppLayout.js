@@ -1,18 +1,21 @@
 import PropTypes from 'prop-types';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Menu, Input, Row, Col } from 'antd';
 import UserProfile from './UserProfile';
 import LoginForm from './LoginForm';
-import styled from 'styled-components';
+// import styled from 'styled-components';
 
-const SearchInput = styled(Input.Search)`
-	vertical-align: middle;
-`;
+// const SearchInput = styled(Input.Search)`
+// 	vertical-align: middle;
+// `;
+
+
 
 const AppLayout = ({ children }) => {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+	const style = useMemo(() => ({ verticalAlign: 10 }), []);
+	
 	return (
 		<div>
 			<Menu mode="horizontal">
@@ -27,7 +30,7 @@ const AppLayout = ({ children }) => {
 					</Link>
 				</Menu.Item>
 				<Menu.Item>
-					<SearchInput enterButton />
+					<Input.Search enterButton style={style} />
 				</Menu.Item>
 				<Menu.Item>
 					<Link href="/signup">
@@ -37,7 +40,7 @@ const AppLayout = ({ children }) => {
 			</Menu>
 			<Row gutter={8}>
 				<Col xs={24} md={6}>
-					{ isLoggedIn ? <UserProfile /> : <LoginForm />}
+					{ isLoggedIn ? <UserProfile /> : <LoginForm setIsLoggedIn={setIsLoggedIn}/>}
 				</Col>
 				<Col xs={24} md={12}>
 					{children}
