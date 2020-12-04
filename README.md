@@ -49,3 +49,7 @@ antd, styled-components, emotion, material-ui
 </AppLayout>
 ```
 - 위의 코드처럼 감싸서 AppLayout에서 { Chidren } props로 받은 후 처리
+
+## next/head
+- html의 <head></head>를 추가하고 싶을 때
+- 그냥 head를 사용하는 것이 아니라 next에서 Head Component를 제공하기때문에 사용하면 됨.
