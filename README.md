@@ -53,3 +53,43 @@ antd, styled-components, emotion, material-ui
 ## next/head
 - html의 <head></head>를 추가하고 싶을 때
 - 그냥 head를 사용하는 것이 아니라 next에서 Head Component를 제공하기때문에 사용하면 됨.
+
+## 반응형 Grid
+### antd/Row, Col
+- xs: 모바일
+- sm: 태블릿
+- md: 작은 데스크탑
+
+* n / 24 라고 생각하면 됨.
+
+- Row의 gutter 옵션은 컬럼들이 사이에 간격을 주는 것
+
+
+
+## useMemo, useCallback
+- 함수형 컴포넌트는 그냥 '함수'이며, 단지 jsx를 반환하는 함수이다.
+- 컴포넌트가 렌더링되는 것은 누군가 그 함수를 호출하여서 실행되는 것인데, 함수가 실행될 때마다 내부 선언되어있는 표현식(변수, 함수)도 매번 다시 선언되어 사용된다.
+- 컴포넌트는 자신의 state가 변경되거나, 부모에게서 받는 props가 변경되었을 때마다 리렌더링 된다.
+- 상위 컴포넌트로부터 a,b라는 props를 전달받는다 할 때, 인자가 하나라도 변경될 때마다 리렌더링됨. props.a만 변경되어도 props.b도 다시 함수를 호출해서 재계산하게 되는 불편함이 생김
+- useMemo, useCallback을 사용해서 첫 렌더링, 마운트될 때만 메모리에 할당되고 그 뒤는 두 번째 인자의 정보에 따라 사용됨.
+
+## style 객체 사용 주의사항
+``` HTML
+<div style={{ marginTop: 10 }}>
+</div>
+```
+- 이런식으로 직접적인 style 객체값을 넣어주게 되면 (inline styling(인라인 스타일링)) style 객체 때문에 reRendering 되어버림
+- 이유 : {} === {} 객체의 값은 false이기 때문에 다른 값으로 취급되므로 React는 virtual DOM으로 매번 검사를 하며 달라진 부분을 찾음. 그렇기 때문에 달라졌다고 확인되어 reRendering되는 문제가 발생함.
+
+``` JS
+const ButtonWrapper = styled.div`
+	margin-top: 10px;
+`;
+
+<ButtonWrapper>
+<div></div>
+</ButtonWrapper>
+```
+- 이런식으로 styled-components를 통해서 이미 styled된 div를 생성하여 해결할 수 있음.
+
+
