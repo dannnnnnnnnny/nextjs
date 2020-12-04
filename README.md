@@ -67,6 +67,9 @@ antd, styled-components, emotion, material-ui
 
 
 ## useMemo, useCallback
+- useCallback : 함수를 캐싱
+- useMemo: 값을 캐싱
+
 - 함수형 컴포넌트는 그냥 '함수'이며, 단지 jsx를 반환하는 함수이다.
 - 컴포넌트가 렌더링되는 것은 누군가 그 함수를 호출하여서 실행되는 것인데, 함수가 실행될 때마다 내부 선언되어있는 표현식(변수, 함수)도 매번 다시 선언되어 사용된다.
 - 컴포넌트는 자신의 state가 변경되거나, 부모에게서 받는 props가 변경되었을 때마다 리렌더링 된다.
@@ -78,9 +81,10 @@ antd, styled-components, emotion, material-ui
 <div style={{ marginTop: 10 }}>
 </div>
 ```
-- 이런식으로 직접적인 style 객체값을 넣어주게 되면 (inline styling(인라인 스타일링)) style 객체 때문에 reRendering 되어버림
+- 이런식으로 직접적인 style 객체값을 넣어주게 되면 (inline styling(인라인 스타일링)) style 객체 때문에 reRendering 되어버림 (최적화 X)
 - 이유 : {} === {} 객체의 값은 false이기 때문에 다른 값으로 취급되므로 React는 virtual DOM으로 매번 검사를 하며 달라진 부분을 찾음. 그렇기 때문에 달라졌다고 확인되어 reRendering되는 문제가 발생함.
 
+#### 해결법 1) styled-components
 ``` JS
 const ButtonWrapper = styled.div`
 	margin-top: 10px;
@@ -90,6 +94,18 @@ const ButtonWrapper = styled.div`
 <div></div>
 </ButtonWrapper>
 ```
-- 이런식으로 styled-components를 통해서 이미 styled된 div를 생성하여 해결할 수 있음.
+- 이런식으로 styled-components를 통해서 이미 styled된 div를 생성하여 reRendering되지 않게 처리할 수도 있음.
 
+#### 해결법 2) useMemo()
+``` JS
+const style = useMemo(() => ({ marginTop: 10 }), []);
 
+<div style={style}>
+</div>
+```
+- useMemo()를 통해 값을 캐싱하여 reRendering 최적화함
+
+### Hooks 함수형 컴포넌트의 reRendering
+- 함수형 컴포넌트에서 리렌더링될 시에는 처음부터 끝까지 다시 실행되는 것은 맞음
+- useCallback은 이전 컴포넌트와 비교 후 처리해서 바뀐게 없으면 그대로 처리
+- jsx부분에서 바뀐 부분이 있다면 '바뀐 부분만' 다시 그림

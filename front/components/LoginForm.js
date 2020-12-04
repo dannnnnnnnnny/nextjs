@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { Form, Input, Button } from 'antd';
 import Link from 'next/link';
 import styled from 'styled-components';
@@ -13,11 +13,13 @@ const LoginForm = () => {
 
 	const onChangeId = useCallback((e) => {
 		setId(e.target.value)
-	}, [])
+	}, []);
 
 	const onChangePasword = useCallback((e) => {
 		setPassword(e.target.value)
-	}, [])
+	}, []);
+
+	const style = useMemo(() => ({ marginTop: 10 }), []);
 
 	return (
 		<Form>
@@ -42,7 +44,7 @@ const LoginForm = () => {
 					required 
 				/>
 			</div>
-			<ButtonWrapper>
+			<ButtonWrapper style={style}>
 				<Button type="primary" htmlFor="submit" loading={false}>로그인</Button>
 				<Link href="/signup"><a><Button>회원가입</Button></a></Link>
 			</ButtonWrapper>
