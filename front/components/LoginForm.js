@@ -47,7 +47,7 @@ const LoginForm = ({ setIsLoggedIn }) => {
 				/>
 			</div>
 			<div style={style}>
-				<Button type="primary" htmlFor="submit" loading={false}>
+				<Button type="primary" htmlType="submit" loading={false}>
 					로그인
 				</Button>
 				<Link href="/signup">
