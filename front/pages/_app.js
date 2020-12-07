@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
+import wrapper from '../store/ConfigureStore';
+
 import 'antd/dist/antd.css';
 const NodeBird = ({ Component }) => {
     return (
@@ -18,4 +20,4 @@ NodeBird.propTypes = {
     Component: PropTypes.elementType.isRequired,
 } 
 
-export default NodeBird;
+export default wrapper.withRedux(NodeBird);
