@@ -140,3 +140,64 @@ export default (initialValue = null) => {
 const [id, onChangeId] = useInput('');
 ```
 - useInput Hooks로 사용
+
+
+## Redux
+- next에 redux를 쉽게 붙일 수 있게 해주는 next redux wrapper가 있음.
+- npm i next-redux-wrapper@6
+
+- store 디렉토리 생성 후 ConfigureStore.js 생성
+- 원래의 redux는 app.js에서 <Provider>로 감싸줘야했지만 next-redux-wrapper에서는 알아서 감싸줌
+- export 할 때 app 컴포넌트를 하이오더컴포넌트로 감싸줌 (wrapper.withRedux(App))
+
+### Redux의 사용 이유
+- login, signup, NicknameEditForm 같은 경우 로그인한 유저의 정보, 로그인 여부를 각각 가져야 함.
+- 여러 컴포넌트들에 흩어져있는 공통적으로 쓰이는 데이터를 모으고 싶으면 부모 컴포넌트를 두면 됨. -> 부모컴포넌트에서 각각 자식 컴포넌트로 데이터를 보내서 사용할수도 있음.
+- 하지만 매번 부모컴포넌트를 만들어서 각각의 자식 컴포넌트로 데이터를 보내주는 과정은 매우 귀찮고 힘듦.
+- 중앙에서 데이터를 저장하고 각 컴포넌트에게 뿌려주는 중앙 데이터 저장소 역할을 하는 것이 Redux
+
+- (React의 ContextAPI도 중앙 데이터 저장소 역할을 함.)
+
+- redux는 원리가 간단하기 때문에 에러가 나더라도 쉽게 추적해서 fix 가능. 하지만 코드량이 많아짐
+- MobX는 코드량은 적지만 에러 추적이 어려움.
+
+- ContextAPI가 redux와 MobX와의 다른 점은 비동기 부분을 직접 처리해줘야한다는 점.
+- 비동기는 요청, 성공, 실패 3가지를 가짐 (서버가 데이터를 주지 못했을 때까지)
+- 또한 컴포넌트에서 직접적으로 useEffect를 통해 데이터를 요청해야함.
+=> 같은 코드의 중복 발생가능성도 있음. 데이터 요청은 별도의 모듈이나 라이브러리를 통해 하고 컴포넌트는 화면 출력에만 집중하는 것이 좋음.
+
+### Redux 원리
+- redux의 저장소의 데이터를 바꾸기 위해서는 action을 생성해줘야 함.
+- (action은 type과 데이터가 존재)
+- action을 실행시키기 위해서는 dispatch가 필요. dispatch하면 중앙 저장소의 데이터가 바뀜
+- redux 저장소에서 데이터를 가져다 사용하고 있는 컴포넌트들은 알아서 바뀐 데이터로 업데이트 됨.
+
+
+#### reducer
+- action을 dispatch한다고 해서 알아서 자동으로 데이터가 바뀌는 것이 아님.
+- action에서 { type: "CHANGE_NAME", data: ~~ } type이 CHANGE_NAME일 때 CHANGE_NAME이 어떤 작업을 하는 action인지 reducer에 다 작성해줘야 함. (보통 swtich문으로 작업)
+``` JS
+switch(action.type) {
+	case 'CHANGE_NAME':
+		return {
+			...state,
+			name: action.data,
+		}
+}
+```
+- 위 reducer의 return문은 불변성을 위함.
+- JS에서는 {} === {}는 false (새로 만든 객체는 false)
+- const a = {};
+- const b = a;
+- a === b 는 true
+=> 위의 성질을 이용 (참조 관계에 있으면 true)
+- return문에서 {}는 항상 새로운 객체를 만드는 것.
+- ...state를 통해서 값은 그대로 유지하고, 바꿀 값만 바꾼 뒤 {}로 새로운 객체를 생성해서 업데이트한다.
+=> 객체를 새로 만들어야 변경 내역들이 추적이 가능해짐. (이전, 이후 기록)
+- 그대로 복사해서 바꿔버리면 참조 관계이기 때문에 이전 기록도 같이 덮어씌워져, 변경 내역을 확인할 수 없음.
+- data를 일일이 작성하지 않고 ...state로 작성하는 이유는 코드량도 있지만 메모리를 위해서 (변경되지 않은 Data들은 그대로 참조됨. 일일이 작성한다면 모든 data가 새롭게 만들어져 메모리를 낭비함.)
+
+- Store의 데이터를 바꾸고 싶을 때마다 action, dispatch, reducer를 만들어줘야 하기때문에 코드량이 매우 많아진다는 단점이 있음.
+- 하지만 redux 사용시, action 하나하나 Redux에 기록이 돼서 에러 추적이 편해짐.
+
+- Chrome 확장프로그램인 redux dev tools를 사용하면 시간을 되돌려서도 redux를 테스트해볼 수 있음.
