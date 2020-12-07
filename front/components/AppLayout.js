@@ -40,13 +40,23 @@ const AppLayout = ({ children }) => {
 			</Menu>
 			<Row gutter={8}>
 				<Col xs={24} md={6}>
-					{ isLoggedIn ? <UserProfile /> : <LoginForm setIsLoggedIn={setIsLoggedIn}/>}
+					{isLoggedIn ? (
+						<UserProfile setIsLoggedIn={setIsLoggedIn} />
+					) : (
+						<LoginForm setIsLoggedIn={setIsLoggedIn} />
+					)}
 				</Col>
 				<Col xs={24} md={12}>
 					{children}
 				</Col>
 				<Col xs={24} md={6}>
-					<a href="https://github.com/ehdgnl5249" target="_blank" rel="noreferrer">Made by dh</a>
+					<a
+						href="https://github.com/ehdgnl5249"
+						target="_blank"
+						rel="noreferrer noopener"
+					>
+						Made by dh
+					</a>
 				</Col>
 			</Row>
 		</div>

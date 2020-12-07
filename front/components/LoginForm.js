@@ -1,19 +1,20 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { Form, Input, Button } from 'antd';
 import Link from 'next/link';
-// import styled from 'styled-components';
+import styled from 'styled-components';
 
 // const ButtonWrapper = styled.div`
 // 	margin-top: 10px;
 // `;
 
+const FormWrapper = styled(Form)`
+	padding: 10px;
+`;
 
-
-// eslint-disable-next-line react/prop-types
 const LoginForm = ({ setIsLoggedIn }) => {
 	const [id, setId] = useState('');
 	const [password, setPassword] = useState('');
-	const style = useMemo(() => ({ marginTop: 10 }), []);
+	const buttonStyle = useMemo(() => ({ marginTop: 10 }), []);
 	
 	const onChangeId = useCallback((e) => {
 		setId(e.target.value);
@@ -25,11 +26,11 @@ const LoginForm = ({ setIsLoggedIn }) => {
 
 	const onSubmitForm = useCallback(() => {
 		console.log(id, password);
-		setIsLoggedIn(true);
+		setIsLoggedIn(true);	// AppLayout(상위 컴포넌트)에서 props로 보낸 함수
 	}, [id, password]);
 
 	return (
-		<Form onFinish={onSubmitForm}>
+		<FormWrapper onFinish={onSubmitForm}>
 			<div>
 				<label htmlFor="user-id">아이디</label>
 				<br />
@@ -46,7 +47,7 @@ const LoginForm = ({ setIsLoggedIn }) => {
 					required
 				/>
 			</div>
-			<div style={style}>
+			<div style={buttonStyle}>
 				<Button type="primary" htmlType="submit" loading={false}>
 					로그인
 				</Button>
@@ -56,7 +57,7 @@ const LoginForm = ({ setIsLoggedIn }) => {
 					</a>
 				</Link>
 			</div>
-		</Form>
+		</FormWrapper>
 	);
 };
 
