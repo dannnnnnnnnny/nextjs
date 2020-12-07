@@ -10,11 +10,9 @@ import LoginForm from './LoginForm';
 // 	vertical-align: middle;
 // `;
 
-
-
 const AppLayout = ({ children }) => {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
-	const style = useMemo(() => ({ verticalAlign: 10 }), []);
+	const style = useMemo(() => ({ verticalAlign: 'middle' }), []);
 	
 	return (
 		<div>
