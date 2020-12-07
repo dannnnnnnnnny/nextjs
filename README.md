@@ -7,8 +7,8 @@
 
 ## 2가지 해결 방안
 -> 검색 엔진 해결을 위해 서버사이드 랜더링 
-  - pre render: 검색 엔진에게는 html을, 사용자에게는 일반 리액트 화면을
-  - 첫 방문만 html, Link나 a태그 눌렀을 때부턴 리액트 방식으로 (NextJS)
+  - pre render: 검색엔진을 알아차리고 검색 엔진에게는 데이터를 받아서 데이터와 함께 html을, 사용자에게는 일반 리액트 방식 화면을
+  - Server Side Rendering: 첫 방문만 html, 페이지 전환(Link나 a태그 눌렀을 때)부턴 리액트 방식으로 (NextJS)
 
 -> CSR은 모든 페이지를 불러옴으로써 더 느려질 수도 있으므로 방문한 페이지만 보여주게 code splitting하는 방법
 
@@ -109,3 +109,34 @@ const style = useMemo(() => ({ marginTop: 10 }), []);
 - 함수형 컴포넌트에서 리렌더링될 시에는 처음부터 끝까지 다시 실행되는 것은 맞음
 - useCallback은 이전 컴포넌트와 비교 후 처리해서 바뀐게 없으면 그대로 처리
 - jsx부분에서 바뀐 부분이 있다면 '바뀐 부분만' 다시 그림
+
+
+### Custom Hooks을 통한 코드 재사용성 높이기
+- Login이나 Signup Form에서의 Input태그들 (ID, Nickname, password, password-check) 은 useState와 useCallback을 쓴다는 공통점이 있고 비슷한 로직인데 반해 모든 Input 태그에 대해서 같은 로직을 반복하려면 코드가 번잡해짐
+- Custom Hooks를 통해서 공통된 부분을 따로 빼내서 재사용성을 높임
+- hooks 디렉토리를 생성 후 useInput.js 생성
+- LoginForm의
+``` JS
+const [id, setId] = useState('')
+const onChangeId = useCallback((e) => {
+	setId(e.target.value)
+}, [])
+```
+- 이 부분이 공통적으로 반복되므로
+``` JS
+import { useState, useCallback } from 'react';
+
+export default (initialValue = null) => {
+	const [value, setValue] = useState(initialValue);
+	const handler = useCallback((e) => {
+		setValue(e.target.value);
+	}, []);
+
+	return [value, handler];
+}
+```
+- 공통된 부분을 따로 빼낸 후
+``` JS
+const [id, onChangeId] = useInput('');
+```
+- useInput Hooks로 사용
