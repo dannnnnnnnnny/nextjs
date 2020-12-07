@@ -4,6 +4,8 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import useInput from '../hooks/useInput';
+import { useDispatch } from 'react-redux';
+import { loginAction } from '../reducers';
 
 // const ButtonWrapper = styled.div`
 // 	margin-top: 10px;
@@ -13,7 +15,9 @@ const FormWrapper = styled(Form)`
 	padding: 10px;
 `;
 
-const LoginForm = ({ setIsLoggedIn }) => {
+const LoginForm = () => {
+	const dispatch = useDispatch()
+
 	const buttonStyle = useMemo(() => ({ marginTop: 10 }), []);
 
 	const [id, onChangeId] = useInput('');
@@ -21,8 +25,10 @@ const LoginForm = ({ setIsLoggedIn }) => {
 
 
 	const onSubmitForm = useCallback(() => {
+		
 		console.log(id, password);
-		setIsLoggedIn(true);	// AppLayout(상위 컴포넌트)에서 props로 보낸 함수
+		dispatch(loginAction({ id, password }));
+
 	}, [id, password]);
 
 	return (
