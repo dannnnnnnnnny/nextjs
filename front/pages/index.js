@@ -7,6 +7,6 @@ const Home = () => {
 				<div>Hello, Next!</div>
 			</AppLayout>
 		);
-}
+};
 
 export default Home;

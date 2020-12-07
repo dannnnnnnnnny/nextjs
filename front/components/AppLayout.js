@@ -12,7 +12,9 @@ import LoginForm from './LoginForm';
 
 const AppLayout = ({ children }) => {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
-	const style = useMemo(() => ({ verticalAlign: 'middle' }), []);
+	const style = useMemo(() => (
+		{ verticalAlign: 'middle' }
+	), []);
 	
 	return (
 		<div>
@@ -36,6 +38,7 @@ const AppLayout = ({ children }) => {
 					</Link>
 				</Menu.Item>
 			</Menu>
+
 			<Row gutter={8}>
 				<Col xs={24} md={6}>
 					{isLoggedIn ? (
@@ -57,6 +60,7 @@ const AppLayout = ({ children }) => {
 					</a>
 				</Col>
 			</Row>
+			
 		</div>
 	);
 };

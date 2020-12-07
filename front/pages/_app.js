@@ -12,7 +12,7 @@ const NodeBird = ({ Component }) => {
 				<Component />
 			</>
 		);
-}
+};
 
 NodeBird.propTypes = {
     Component: PropTypes.elementType.isRequired,
