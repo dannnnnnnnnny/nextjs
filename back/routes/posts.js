@@ -3,6 +3,8 @@ const { Post, Image, Comment, User } = require('../models');
 
 const router = express.Router();
 
+// 게시물 조회 API
+// GET /posts
 router.get('/', async (req, res, next) => {	// GET /posts
 	try {
 		const posts = await Post.findAll({

@@ -1,8 +1,49 @@
 const express = require('express');
+const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
 const router = express.Router();
 const { Post, Image, Comment, User } = require('../models');
 const { isLoggedIn } = require('./middlewares');
 
+try {
+	fs.accessSync('uploads');
+} catch (error) {
+	console.log('uploads 폴더가 없으므로 생성합니다.');
+	fs.mkdirSync('uploads');
+}
+
+
+const upload = multer({
+	storage: multer.diskStorage({
+		destination(req, file, done) {
+			done(null, 'uploads');
+		},
+		filename(req, file, done) {	// abc.png
+			const ext = path.extname(file.originalname);	// 확장자 추출(.png)
+			const basename = path.basename(file.originalname) // (abc)
+			done(null, basename + new Date().getTime() + ext);	// abc123152165.png
+		},
+	}),
+	limits: { fileSize: 20 * 1024 * 1024 },	// 용량 20MB 제한
+});
+
+// 이미지 업로드 API
+// POST /post/images
+// 이미지 업로드 후 실행됨
+/* 
+	upload.array('image') => 
+	PostForm.js의 <input type="file" name="image" multiple hidden ref={imageInput} />  (name="image"인 부분을 받음)
+	이미지를 하나만 받을 때는 .array()가 아닌 .single()
+	이미지가 필요없을 때는 .none()
+*/
+router.post('/images', isLoggedIn, upload.array('image'), async (req, res, next) => {
+	console.log(req.files);
+	res.json(req.files.map((v) => v.filename));
+});
+
+// 게시물 작성 API
+// POST /post
 router.post('/', isLoggedIn, async (req, res, next) => {
 	try {
 		const post = await Post.create({
@@ -45,6 +86,8 @@ router.post('/', isLoggedIn, async (req, res, next) => {
 	}
 });
 
+// 댓글 작성 API
+// POST /1/comment (1번 게시물에 댓글 작성)
 router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {	// POST /post/1/comment
 	try {
 		const post = await Post.findOne({	// 올바른 주소인지
@@ -76,6 +119,7 @@ router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {	// POST 
 	}
 });
 
+// 게시물 좋아요 API
 // PATCH /post/1/like
 router.patch('/:postId/like', isLoggedIn, async (req, res, next) => {
 	try {
@@ -92,6 +136,7 @@ router.patch('/:postId/like', isLoggedIn, async (req, res, next) => {
 	
 });
 
+// 게시물 좋아요 취소 API
 // DELETE /post/1/like
 router.delete('/:postId/like', isLoggedIn, async (req, res, next) => {
 	try {
@@ -107,6 +152,8 @@ router.delete('/:postId/like', isLoggedIn, async (req, res, next) => {
 	}
 });
 
+// 게시물 삭제 API
+// DELETE /post/1
 router.delete('/:postId', isLoggedIn, async (req, res, next) => {
 	try {
 		await Post.destroy({

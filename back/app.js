@@ -30,8 +30,8 @@ app.use(cors({
 	credentials: true,
 }));	// cors 허용
 // req.body를 사용하기 위한 설정 (다른 router들보다 먼저 선언되어야 함.)
-app.use(bodyParser.json());	// front에서 json형식으로 데이터를 보냈을 때 req.body안에 넣어줌
-app.use(express.urlencoded({ extended: true }));	// form submit시 urlencoded 방식 처리해서 req.body에 넣어줌
+app.use(bodyParser.json());	// front에서 axios json형식으로 데이터를 보냈을 때 req.body안에 넣어줌
+app.use(express.urlencoded({ extended: true }));	// 일반 form submit시 urlencoded 방식 처리해서 req.body에 넣어줌
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(session({
 	saveUninitialized: false,

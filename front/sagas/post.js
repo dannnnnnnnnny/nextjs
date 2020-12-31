@@ -1,6 +1,9 @@
 import { all, fork, call, put, takeLatest, throttle } from 'redux-saga/effects';
 import axios from 'axios';
 import {
+	UPLOAD_IMAGES_REQUEST,
+	UPLOAD_IMAGES_SUCCESS,
+	UPLOAD_IMAGES_FAILURE,
 	LIKE_POST_REQUEST,
 	LIKE_POST_SUCCESS,
 	LIKE_POST_FAILURE,
@@ -158,6 +161,27 @@ function* addComment(action) {
 	}
 }
 
+function uploadImagesAPI(data) {
+	return axios.post(`/post/images`, data);	// FormData는 그대로 보내줘야 함.
+}
+
+function* uploadImages(action) {
+	try {
+		const result = yield call(uploadImagesAPI, action.data);
+
+		yield put({
+			type: UPLOAD_IMAGES_SUCCESS,
+			data: result.data,
+		});
+	} catch (err) {
+		console.error(err);
+		yield put({
+			type: UPLOAD_IMAGES_FAILURE,
+			error: err.response.data,
+		});
+	}
+}
+
 function* watchLoadPosts() {
 	yield throttle(5000, LOAD_POSTS_REQUEST, loadPosts);
 }
@@ -182,9 +206,13 @@ function* watchUnlikePost() {
 	yield takeLatest(UNLIKE_POST_REQUEST, unLikePost);
 }
 
+function* watchUploadImages() {
+	yield takeLatest(UPLOAD_IMAGES_REQUEST, uploadImages);
+}
 
 export default function* postSaga() {
 	yield all([
+		fork(watchUploadImages),
 		fork(watchLikePost),
 		fork(watchUnlikePost),
 		fork(watchAddPost),
