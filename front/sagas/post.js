@@ -47,29 +47,27 @@ function* loadPosts(action) {
 }
 
 function addPostAPI(data) {
-	return axios.post('/post', { content: data });
+  return axios.post('/post', data);
 }
 
 function* addPost(action) {
-	try {
-		const result = yield call(addPostAPI, action.data);
-
-		yield put({
-			type: ADD_POST_SUCCESS,
-			data: result.data,
-		});
-		yield put({
-			type: ADD_POST_TO_ME,
-			data: result.data.id,
-		});
-
-	} catch (err) {
-		console.log(err);
-		yield put({
-			type: ADD_POST_FAILURE,
-			error: err.response.data,
-		});
-	}
+  try {
+    const result = yield call(addPostAPI, action.data);
+    yield put({
+      type: ADD_POST_SUCCESS,
+      data: result.data,
+    });
+    yield put({
+      type: ADD_POST_TO_ME,
+      data: result.data.id,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: ADD_POST_FAILURE,
+      error: err.response.data,
+    });
+  }
 }
 
 function likePostAPI(data) {

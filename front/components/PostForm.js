@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useRef, useEffect } from 'react';
 import { Form, Input, Button } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
-import { addPost, UPLOAD_IMAGES_REQUEST } from '../reducers/post';
+import { UPLOAD_IMAGES_REQUEST, REMOVE_IMAGE, ADD_POST_REQUEST } from '../reducers/post';
 import useInput from '../hooks/useInput';
 
 const PostForm = () => {
@@ -25,8 +25,21 @@ const PostForm = () => {
 	}, [imageInput.current]);
 
 	const onSubmit = useCallback(() => {
-		dispatch(addPost(text))
-	}, [text]);
+		if (!text || !text.trim()) {
+			return alert('게시글을 작성해주세요.');
+		}
+
+		const formData = new FormData();
+		imagePaths.forEach((p) => {
+			formData.append('image', p);
+		})
+		formData.append('content', text);
+
+		return dispatch({
+			type: ADD_POST_REQUEST,
+			data: formData,
+		})
+	}, [text, imagePaths]);
 
 	const onChangeImages = useCallback((e) => {
 		console.log('images', e.target.files);
@@ -38,8 +51,15 @@ const PostForm = () => {
 			type: UPLOAD_IMAGES_REQUEST,
 			data: imageFormData,
 		});
-
 	}, []);
+
+	const onRemoveImage = useCallback((i) => () => {
+		dispatch({
+			type: REMOVE_IMAGE,
+			data: i,
+		});
+	}, []);
+
 	return (
 		<Form style={formStyle} encType="multipart/form-data" onFinish={onSubmit}>
 			<Input.TextArea 
@@ -54,11 +74,12 @@ const PostForm = () => {
 				<Button type="primary" style={{ float: 'right' }} htmlType="submit">작성</Button>
 			</div>
 			<div>
-				{imagePaths.map((v) => (
+				{imagePaths.map((v, i) => (
+					// map안에서 onRemoveImage(i) 처럼 콜백함수에 데이터를 넣고 싶으면 고차함수 사용
 					<div key={v} style={{ display: 'inline-block' }}>
-						<img src={v} style={{ width: '200px' }} alt={v} />
+						<img src={`http://localhost:3065/${v}`} style={{ width: '200px' }} alt={v} />
 						<div>
-							<Button>제거</Button>
+							<Button onClick={onRemoveImage(i)}>제거</Button>
 						</div>
 					</div>
 				))}
