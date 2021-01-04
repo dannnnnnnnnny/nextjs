@@ -25,6 +25,9 @@ export const initialState = {
 	uploadImagesLoading: false,
 	uploadImagesDone: false,
 	uploadImagesError: null,
+	retweetLoading: false,
+	retweetDone: false,
+	retweetError: null,
 };
 
 export const LIKE_POST_REQUEST = 'LIKE_POST_REQUEST';
@@ -55,6 +58,10 @@ export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
 export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
 
+export const RETWEET_REQUEST = 'RETWEET_REQUEST';
+export const RETWEET_SUCCESS = 'RETWEET_SUCCESS';
+export const RETWEET_FAILURE = 'RETWEET_FAILURE';
+
 export const REMOVE_IMAGE = 'REMOVE_IMAGE';
 
 export const addPost = (data) => {
@@ -76,6 +83,24 @@ const reducer = (state = initialState, action) => {
 		switch (action.type) {
 			case REMOVE_IMAGE:
 				draft.imagePaths = draft.imagePaths.filter((v, i) => i !== action.data);
+				break;
+
+			case RETWEET_REQUEST:
+				draft.retweetLoading = true;
+				draft.retweetDone = false;
+				draft.retweetError = null;
+				break;
+
+			case RETWEET_SUCCESS: {
+				draft.retweetLoading = false;
+				draft.retweetDone = true;
+				draft.mainPosts.unshift(action.data);
+				break;
+			}
+
+			case RETWEET_FAILURE:
+				draft.retweetLoading = false;
+				draft.retweetError = action.error;
 				break;
 
 			case UPLOAD_IMAGES_REQUEST:
@@ -143,8 +168,8 @@ const reducer = (state = initialState, action) => {
 			case LOAD_POSTS_SUCCESS:
 				draft.loadPostsLoading = false;
 				draft.loadPostsDone = true;
-				draft.mainPosts = action.data.concat(draft.mainPosts); // 10개씩 이어붙임
-				draft.hasMorePosts = draft.mainPosts.length < 50; // 50개가 넘으면 받지 않음.
+				draft.mainPosts = draft.mainPosts.concat(action.data); // 10개씩 이어붙임
+				draft.hasMorePosts = action.data.length === 10;	// 불러올 때 10개를 불러오면 그 다음 게시물이 있을 것
 				break;
 
 			case LOAD_POSTS_FAILURE:
@@ -162,6 +187,7 @@ const reducer = (state = initialState, action) => {
 				draft.addPostLoading = false;
 				draft.addPostDone = true;
 				draft.mainPosts.unshift(action.data);
+				draft.imagePaths = [];
 				break;
 
 			case ADD_POST_FAILURE:

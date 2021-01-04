@@ -8,7 +8,7 @@ import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
 
 const Home = () => {
 	const { me } = useSelector((state) => state.user);
-	const { mainPosts, hasMorePosts, loadPostsLoading } = useSelector((state) => state.post);
+	const { mainPosts, hasMorePosts, loadPostsLoading, retweetError } = useSelector((state) => state.post);
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -16,6 +16,12 @@ const Home = () => {
 		dispatch({ type: LOAD_POSTS_REQUEST });
 	}, []);
 
+	useEffect(() => {
+		if (retweetError) {
+			alert(retweetError);
+		}
+	}, [retweetError]);
+	
 	// 스크롤을 통한 데이터 불러오기
 	useEffect(() => {
 		
@@ -25,8 +31,10 @@ const Home = () => {
 				document.documentElement.scrollHeight - 500
 			) {
 				if (hasMorePosts && !loadPostsLoading) {
+					const lastId = mainPosts[mainPosts.length - 1]?.id;	// 마지막 게시물의 ID
 					dispatch({
 						type: LOAD_POSTS_REQUEST,
+						lastId,
 					});
 				}
 			}

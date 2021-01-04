@@ -1,6 +1,9 @@
 import { all, fork, call, put, takeLatest, throttle } from 'redux-saga/effects';
 import axios from 'axios';
 import {
+	RETWEET_REQUEST,
+	RETWEET_SUCCESS,
+	RETWEET_FAILURE,
 	UPLOAD_IMAGES_REQUEST,
 	UPLOAD_IMAGES_SUCCESS,
 	UPLOAD_IMAGES_FAILURE,
@@ -25,13 +28,13 @@ import {
 } from '../reducers/post';
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
 
-function loadPostsAPI(data) {
-	return axios.get('/posts', data);
+function loadPostsAPI(lastId) {
+	return axios.get(`/posts?lastId=${lastId || 0}`);
 }
 
 function* loadPosts(action) {
 	try {
-		const result = yield call(loadPostsAPI, action.data);
+		const result = yield call(loadPostsAPI, action.lastId);
 
 		yield put({
 			type: LOAD_POSTS_SUCCESS,
@@ -180,8 +183,29 @@ function* uploadImages(action) {
 	}
 }
 
+function retweetAPI(data) {
+	return axios.post(`/post/${data}/retweet`);
+}
+
+function* retweet(action) {
+	try {
+		const result = yield call(retweetAPI, action.data);
+
+		yield put({
+			type: RETWEET_SUCCESS,
+			data: result.data,
+		});
+	} catch (err) {
+		console.error(err);
+		yield put({
+			type: RETWEET_FAILURE,
+			error: err.response.data,
+		});
+	}
+}
+
 function* watchLoadPosts() {
-	yield throttle(5000, LOAD_POSTS_REQUEST, loadPosts);
+	yield throttle(3000, LOAD_POSTS_REQUEST, loadPosts);
 }
 
 function* watchAddPost() {
@@ -208,6 +232,10 @@ function* watchUploadImages() {
 	yield takeLatest(UPLOAD_IMAGES_REQUEST, uploadImages);
 }
 
+function* watchRetweet() {
+	yield takeLatest(RETWEET_REQUEST, retweet);
+}
+
 export default function* postSaga() {
 	yield all([
 		fork(watchUploadImages),
@@ -217,5 +245,6 @@ export default function* postSaga() {
 		fork(watchLoadPosts),
 		fork(watchRemovePost),
 		fork(watchAddComment),
+		fork(watchRetweet),
 	]);
 }
