@@ -2,10 +2,13 @@ import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Head from 'next/head';
 import Router from 'next/router';
+import axios from 'axios';
+import { END } from 'redux-saga';
 import { Form, Input, Checkbox, Button } from 'antd';
 import useInput from '../hooks/useInput';
-import { SIGN_UP_REQUEST } from '../reducers/user';
+import { LOAD_MY_INFO_REQUEST, SIGN_UP_REQUEST } from '../reducers/user';
 import AppLayout from '../components/AppLayout';
+import wrapper from '../store/ConfigureStore';
 
 const Signup = () => {
 	const dispatch = useDispatch();
@@ -148,5 +151,19 @@ const Signup = () => {
 		</AppLayout>
 	);
 };
+
+export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+	console.log('getServerSideProps Start');
+	console.log(context.req.headers);
+	const cookie = context.req ? context.req.headers.cookie : '';	
+	axios.defaults.headers.cookie = '';
+	if(context.req && cookie) {
+		axios.defaults.headers.cookie = cookie;
+	}
+	context.store.dispatch({ type: LOAD_MY_INFO_REQUEST });
+	context.store.dispatch(END);
+	console.log('getServerSideProps End');
+	await context.store.sagaTask.toPromise();
+});
 
 export default Signup;

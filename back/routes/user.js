@@ -8,6 +8,7 @@ const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 // 로그인한 자신의 데이터 조회 API (without Password)
 // GET /user
 router.get('/', async (req, res, next) => {
+	// console.log(req.headers); // SSR로 쿠키가 잘 보내지는지 확인
 	try {
 		if (req.user) {
 			const fullUserWithoutPassword = await User.findOne({
@@ -38,7 +39,44 @@ router.get('/', async (req, res, next) => {
 		console.error(error);
 		next(error);
 	}
-	
+});
+
+router.get('/:userId', async (req, res, next) => {
+	try {
+
+		const fullUserWithoutPassword = await User.findOne({
+			where: { id: req.params.userId },
+			attributes: {
+				exclude: ['password'], 
+			},
+			include: [
+				{
+					model: Post,
+				},
+				{
+					model: User,
+					as: 'Followings',
+				},
+				{
+					model: User,
+					as: 'Followers',
+				},
+			],
+		});
+		if (fullUserWithoutPassword) {
+			// 개인정보 침해 예방해서 서버에서 먼저 length만 꺼내서 보냄
+			const data = fullUserWithoutPassword.toJSON();
+			data.Posts = data.Posts.length;
+			data.Followers = data.Followers.length;
+			data.Followings = data.Followings.length;
+			res.status(200).json(data);
+		} else {
+			res.status(404).json('존재하지 않는 사용자입니다.');
+		}
+	} catch (error) {
+		console.error(error);
+		next(error);
+	}
 });
 
 // 로그인 API (PassportJS 모듈 사용)

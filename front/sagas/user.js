@@ -13,6 +13,9 @@ import {
 	LOAD_MY_INFO_REQUEST,
 	LOAD_MY_INFO_SUCCESS,
 	LOAD_MY_INFO_FAILURE,
+	LOAD_USER_REQUEST,
+	LOAD_USER_SUCCESS,
+	LOAD_USER_FAILURE,
 	FOLLOW_REQUEST,
 	FOLLOW_SUCCESS,
 	FOLLOW_FAILURE,
@@ -153,6 +156,26 @@ function* loadMyInfo() {
 	}
 }
 
+function loadUserAPI(data) {
+	return axios.get(`/user/${data}`);
+}
+
+function* loadUser(action) {
+	try {
+		const result = yield call(loadUserAPI, action.data);
+
+		yield put({
+			type: LOAD_USER_SUCCESS,
+			data: result.data,
+		});
+	} catch (err) {
+		yield put({
+			type: LOAD_USER_FAILURE,
+			error: err.response.data,
+		});
+	}
+}
+
 function logInAPI(data) {
 	return axios.post('/user/login', data);
 }
@@ -254,6 +277,9 @@ function* watchChangeNickname() {
 function* watchLoadMyInfo() {
 	yield takeLatest(LOAD_MY_INFO_REQUEST, loadMyInfo);
 }
+function* watchLoadUser() {
+	yield takeLatest(LOAD_USER_REQUEST, loadUser);
+}
 function* watchLoadFollowers() {
 	yield takeLatest(LOAD_FOLLOWERS_REQUEST, loadFollowers);
 }
@@ -268,6 +294,7 @@ export default function* userSaga() {
 	yield all([
 		fork(watchFollow),
 		fork(watchLoadMyInfo),
+		fork(watchLoadUser),
 		fork(watchUnfollow),
 		fork(watchLogIn),
 		fork(watchLogOut),

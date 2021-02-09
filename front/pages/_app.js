@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import withReduxSaga from 'next-redux-saga';
+// import withReduxSaga from 'next-redux-saga';
 import Head from 'next/head';
 import wrapper from '../store/ConfigureStore';
 
@@ -22,4 +22,4 @@ NodeBird.propTypes = {
     Component: PropTypes.elementType.isRequired,
 } 
 
-export default wrapper.withRedux(withReduxSaga(NodeBird));
+export default wrapper.withRedux(NodeBird);
