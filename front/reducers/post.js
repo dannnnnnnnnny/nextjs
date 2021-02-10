@@ -3,6 +3,7 @@ import produce from "immer";
 export const initialState = {
 	mainPosts: [],
 	imagePaths: [], // image 업로드시 이미지 경로 저장
+	singlePost: null,
 	hasMorePosts: true, // false면 데이터를 가져오지 않게
 	likePostLoading: false,
 	likePostDone: false,
@@ -13,6 +14,9 @@ export const initialState = {
 	loadPostsLoading: false,
 	loadPostsDone: false,
 	loadPostsError: null,
+	loadPostLoading: false,
+	loadPostDone: false,
+	loadPostError: null,
 	addPostLoading: false,
 	addPostDone: false,
 	addPostError: null,
@@ -42,9 +46,21 @@ export const UNLIKE_POST_REQUEST = 'UNLIKE_POST_REQUEST';
 export const UNLIKE_POST_SUCCESS = 'UNLIKE_POST_SUCCESS';
 export const UNLIKE_POST_FAILURE = 'UNLIKE_POST_FAILURE';
 
+export const LOAD_HASHTAG_POSTS_REQUEST = 'LOAD_POSTS_REQUEST';
+export const LOAD_HASHTAG_POSTS_SUCCESS = 'LOAD_POSTS_SUCCESS';
+export const LOAD_HASHTAG_POSTS_FAILURE = 'LOAD_POSTS_FAILURE';
+
+export const LOAD_USER_POSTS_REQUEST = 'LOAD_POSTS_REQUEST';
+export const LOAD_USER_POSTS_SUCCESS = 'LOAD_POSTS_SUCCESS';
+export const LOAD_USER_POSTS_FAILURE = 'LOAD_POSTS_FAILURE';
+
 export const LOAD_POSTS_REQUEST = 'LOAD_POSTS_REQUEST';
 export const LOAD_POSTS_SUCCESS = 'LOAD_POSTS_SUCCESS';
 export const LOAD_POSTS_FAILURE = 'LOAD_POSTS_FAILURE';
+
+export const LOAD_POST_REQUEST = 'LOAD_POST_REQUEST';
+export const LOAD_POST_SUCCESS = 'LOAD_POST_SUCCESS';
+export const LOAD_POST_FAILURE = 'LOAD_POST_FAILURE';
 
 export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
 export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS';
@@ -159,12 +175,16 @@ const reducer = (state = initialState, action) => {
 				draft.unLikeError = action.error;
 				break;
 
+			case LOAD_HASHTAG_POSTS_REQUEST:
+			case LOAD_USER_POSTS_REQUEST:
 			case LOAD_POSTS_REQUEST:
 				draft.loadPostsLoading = true;
 				draft.loadPostsDone = false;
 				draft.loadPostsError = null;
 				break;
 
+			case LOAD_HASHTAG_POSTS_SUCCESS:
+			case LOAD_USER_POSTS_SUCCESS:
 			case LOAD_POSTS_SUCCESS:
 				draft.loadPostsLoading = false;
 				draft.loadPostsDone = true;
@@ -172,9 +192,28 @@ const reducer = (state = initialState, action) => {
 				draft.hasMorePosts = action.data.length === 10;	// 불러올 때 10개를 불러오면 그 다음 게시물이 있을 것
 				break;
 
+			case LOAD_HASHTAG_POSTS_FAILURE:
+			case LOAD_USER_POSTS_FAILURE:
 			case LOAD_POSTS_FAILURE:
 				draft.loadPostsLoading = false;
 				draft.loadPostsError = action.error;
+				break;
+			
+			case LOAD_POST_REQUEST:
+				draft.loadPostLoading = true;
+				draft.loadPostDone = false;
+				draft.loadPostError = null;
+				break;
+
+			case LOAD_POST_SUCCESS:
+				draft.loadPostLoading = false;
+				draft.loadPostDone = true;
+				draft.singlePost = action.data; 
+				break;
+
+			case LOAD_POST_FAILURE:
+				draft.loadPostLoading = false;
+				draft.loadPostError = action.error;
 				break;
 
 			case ADD_POST_REQUEST:

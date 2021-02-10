@@ -13,6 +13,7 @@ const PostCard = ({ post }) => {
 	const dispatch = useDispatch();
 	const { me } = useSelector((state) => state.user);
 	const id = me?.id; // optional 연산자 (있으면 id, 없으면 undefined)
+	console.log(post)
 	const liked = post.Likers?.find((v) => v.id === id);	// 게시글 좋아요 누른 사람 중 자신이 있는지
 	const { removePostLoading } = useSelector((state) => state.post);
 	const [commentFormOpened, setCommentFormOpened] = useState(false);
